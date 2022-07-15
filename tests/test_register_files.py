@@ -1,5 +1,5 @@
 from tests import DATA_DIR
-from murmur.register_files import enumerate_files
+from murmur.register_files import enumerate_files, ID3
 from unittest import TestCase
 import unittest
 import os
@@ -26,6 +26,16 @@ class TestEnumerateFiles(TestCase):
         result = enumerate_files(self.test_dir)
         expect = [self.test_file_1, self.test_file_2]
         self.assertEqual(result, expect)
+
+
+class TestID3(TestCase):
+    path = os.path.join(DATA_DIR, "id3v2.mp3")
+
+    def test_load(self):
+        id3v2 = ID3(self.path)
+        id3v2.load()
+        self.assertEqual(id3v2.is_ID3v2, True)
+        self.assertEqual(id3v2.version, "ID3v2.3.0")
 
 
 if __name__ == '__main__':

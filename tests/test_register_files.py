@@ -1,3 +1,4 @@
+from tests import DATA_DIR
 from murmur.register_files import enumerate_files
 from unittest import TestCase
 import unittest

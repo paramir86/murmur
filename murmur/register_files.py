@@ -7,6 +7,7 @@ def enumerate_files(path: str) -> list[str]:
     safix = r"/**/*.mp3"
     return glob.glob(path + safix, recursive=True)
 
+
 def get_syncsafe(data: bytes) -> int:
     data = [x & 0b01111111 for x in data]
     ans = (data[0] << 21) | (data[1] << 14) | (data[2] << 7) | data[3]

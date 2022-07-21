@@ -1,4 +1,3 @@
-from ast import parse
 import glob
 from io import BufferedReader
 import re
@@ -13,14 +12,6 @@ class ID3:
     def __init__(self, file_address: str):
         self.file_address = file_address
         self.load()
-
-        self.title = None
-        self.artist = None
-        self.album = None
-        self.album_artist = None
-        self.track = None
-        self.disc_number = None
-        self.year = None
 
     def get_syncsafe(self, data: bytes) -> int:
         data = [x & 0b01111111 for x in data]

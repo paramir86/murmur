@@ -1,5 +1,5 @@
 from tests import DATA_DIR
-from murmur.register_files import enumerate_files, ID3
+from murmur.register_files import enumerate_files, get_syncsafe, ID3
 from unittest import TestCase
 import unittest
 import os
@@ -28,11 +28,8 @@ class TestEnumerateFiles(TestCase):
         self.assertEqual(result, expect)
 
 
-class TestID3(TestCase):
-    path = os.path.join(DATA_DIR, "id3v2.mp3")
-
+class TestGetSyncsafe(TestCase):
     def test_get_syncsafe(self):
-        id3v2 = ID3(self.path)
         patterns = [
             ([0b11111111, 0b11111111, 0b11111111, 0b11111111], 268435455),
             ([0b00000000, 0b00000000, 0b00000000, 0b00000000], 0),
@@ -40,7 +37,13 @@ class TestID3(TestCase):
         ]
         for in_data, out_data in patterns:
             with self.subTest():
-                self.assertEqual(id3v2.get_syncsafe(in_data), out_data)
+                self.assertEqual(get_syncsafe(in_data), out_data)
+
+
+class TestID3(TestCase):
+    path = os.path.join(DATA_DIR, "id3v2.mp3")
+
+
 
     def test_header(self):
         id3v2 = ID3(self.path)

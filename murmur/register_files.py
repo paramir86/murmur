@@ -43,7 +43,7 @@ class ID3:
 
     def parse_frames(self, tag_size: int, buffer: BufferedReader):
         self.frames = {}
-        while buffer.tell() + 10 <= tag_size:
+        while buffer.tell() + 10 < tag_size:
             frame_id = buffer.read(4).decode()
             frame_size = self.get_syncsafe(buffer.read(4))
             frame_flags = buffer.read(2)

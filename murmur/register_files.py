@@ -1,5 +1,7 @@
 from ast import parse
 import glob
+from io import BufferedReader
+import re
 
 
 def enumerate_files(path: str) -> list[str]:
@@ -27,24 +29,33 @@ class ID3:
 
     def load(self):
         with open(self.file_address, 'rb') as f:
-            self.parse_header(f.read(10))
-            self.frames = f.read(self.tag_size)
-            self.parse_frames(self.frames)
+            self.parse_header(f)
+            self.parse_frames(self.tag_size, f)
 
-    def parse_header(self, header: bytes):
-        if header[0: 3] == b'ID3':
+    def parse_header(self, buffer: BufferedReader):
+        if buffer.read(3) == b'ID3':
             self.is_ID3v2 = True
-            major_version = str(header[3])
-            revision_number = str(header[4])
+            major_version = str(buffer.read(1)[0])
+            revision_number = str(buffer.read(1)[0])
             self.tag_version = "ID3v2." + major_version + "." + revision_number
-            self.tag_flags = header[5]
-            self.tag_size = self.get_syncsafe(header[6: 10])
+            self.tag_flags = buffer.read(1)
+            self.tag_size = self.get_syncsafe(buffer.read(4))
 
-    def parse_frames(self, frames: bytes):
-        idx = 0
-        for i in range(7):
-            frame_id = frames[idx+0: idx+4]
-            frame_size = self.get_syncsafe(frames[idx+4: idx+8])
-            frame_flags = frames[idx+8: idx+10]
-            print(frame_id, frame_size, frame_flags, frames[idx+10: idx+10+frame_size])
-            idx += 10+frame_size
+    def parse_frames(self, tag_size: int, buffer: BufferedReader):
+        self.frames = {}
+        while buffer.tell() + 10 <= tag_size:
+            frame_id = buffer.read(4).decode()
+            frame_size = self.get_syncsafe(buffer.read(4))
+            frame_flags = buffer.read(2)
+            if list(frame_id)[0] == "T":
+                character_code = buffer.read(1)
+                text = buffer.read(frame_size - 1).decode()
+                pattern = "^(.*?)\x00"
+                regex_result = re.match(pattern, text)
+                if regex_result is None:
+                    frame_body = text
+                else:
+                    frame_body = regex_result.groups()[0]
+            else:
+                frame_body = buffer.read(frame_size)
+            self.frames[frame_id] = frame_body

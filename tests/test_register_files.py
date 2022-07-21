@@ -48,5 +48,11 @@ class TestID3(TestCase):
         self.assertEqual(id3v2.tag_version, "ID3v2.3.0")
         self.assertEqual(id3v2.tag_size, 10426)
 
+    def test_text_frame(self):
+        id3v2 = ID3(self.path)
+        self.assertEqual(id3v2.frames["TYER"], "2022")
+        self.assertEqual(id3v2.frames["TIT2"], "test-title")
+        self.assertEqual(id3v2.frames["TPE1"], "test-artist")
+
 if __name__ == '__main__':
     unittest.main()

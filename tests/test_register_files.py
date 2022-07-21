@@ -43,8 +43,6 @@ class TestGetSyncsafe(TestCase):
 class TestID3(TestCase):
     path = os.path.join(DATA_DIR, "id3v2.mp3")
 
-
-
     def test_header(self):
         id3v2 = ID3(self.path)
         self.assertEqual(id3v2.is_ID3v2, True)

@@ -3,7 +3,7 @@ from io import BufferedReader
 import re
 
 
-def enumerate_files(path: str) -> list[str]:
+def enumerate_files(path: str):
     safix = r"/**/*.mp3"
     return glob.glob(path + safix, recursive=True)
 
@@ -42,7 +42,7 @@ class ID3:
             if list(frame_id)[0] == "T":
                 character_code = buffer.read(1)
                 text = buffer.read(frame_size - 1).decode()
-                pattern = "^(.*?)\x00"
+                pattern = "^([^\x00]*)"
                 regex_result = re.match(pattern, text)
                 if regex_result is None:
                     frame_body = text

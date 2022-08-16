@@ -7,26 +7,13 @@ db_name = "murmur_db"
 user = "mysqluser"
 password = "mysqlpass"
 
-DATABASE = "mysql://%s:%s@%s/%s?charset=utf8" % (
+DATABASE = "mysql://%s:%s@%s/%s" % (
     user,
     password,
     host,
     db_name,
 )
 
-ENGINE = create_engine(
-    DATABASE,
-    encoding="utf-8",
-    echo=True
-)
-
-session = scoped_session(
-    sessionmaker(
-        autocommit=False,
-        autoflush=False,
-        bind=ENGINE
-    )
-)
-
+ENGINE = create_engine(DATABASE)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=ENGINE)
 Base = declarative_base()
-Base.query = session.query()
